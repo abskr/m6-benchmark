@@ -13,7 +13,7 @@ server.use(express.json());
 server.use("/products", productsRouter);
 server.use("/cart", cartsRouter);
 server.use("/categories", categoriesRouter);
-db.sequelize.sync({ force: true }).then((result) => {
+db.sequelize.sync({ force: false }).then((result) => {
  return db.User.findByPk(1)
   
 }).then(async user=> {

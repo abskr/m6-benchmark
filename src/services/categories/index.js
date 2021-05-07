@@ -29,7 +29,8 @@ router
   .route("/:id")
   .get(async (req, res, next) => {
     try {
-     
+     const category = await Category.findByPk(req.params.id)
+     res.send(category)
     } catch (e) {
       console.log(e);
       next(e);
@@ -37,7 +38,8 @@ router
   })
   .put(async (req, res, next) => {
     try {
-      
+      const category = await Category.update(req.body, {where:{id:req.params.id}, returning: true})
+      res.send(category)
     } catch (e) {
       console.log(e);
       next(e);
@@ -45,7 +47,12 @@ router
   })
   .delete(async (req, res, next) => {
     try {
-    
+      const rows = await Category.destroy({where:{id:req.params.id}})
+      if (rows>0){
+        res.send('oke')
+      } else {
+        res.status(404).send('Not Found')
+      }
     } catch (e) {
       console.log(e);
       next(e);

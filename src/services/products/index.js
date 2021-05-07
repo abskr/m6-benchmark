@@ -1,13 +1,14 @@
 const express = require("express");
 const Product = require('../../db').Product
 const Category = require('../../db').Category
+const Review = require('../../db').Review
 const router = express.Router();
 
 router
   .route("/")
   .get(async (req, res, next) => {
     try {
-     const products = await Product.findAll({include:Category})
+     const products = await Product.findAll({include:[Category, Review]})
      res.send(products)
     
     } catch (e) {
@@ -29,7 +30,9 @@ router
   .route("/:id")
   .get(async (req, res, next) => {
     try {
-      const product = await Product.findByPk(req.params.id)
+      const product = await Product.findByPk(req.params.id, {
+        include: [Category, {model: Review, where: {productId : req.params.id}}]
+      })
       res.send(product)
     } catch (e) {
       console.log(e);
@@ -58,5 +61,27 @@ router
       next(e);
     }
   });
+
+router
+  .route("/:productId/reviews/")
+  .get(async (req, res, next) => {
+    try {
+      const reviews = await Review.findAll({where: {productId: req.params.productId }})
+      res.send(reviews)
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  })
+  .post(async (req, res, next) => {
+    try {
+      req.body.productId = req.params.productId
+      const reviews = await Review.create(req.body)
+      res.send(reviews)
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  })
 
 module.exports = router;

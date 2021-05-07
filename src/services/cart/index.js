@@ -8,11 +8,6 @@ const router = express.Router();
 
 router.route("/:userId").get(async (req, res, next) => {
   try {
-// select  "productId", p.id,  p.name, p.price, "categoryId", count("productId") as unitaryPrice
-// from carts as c
-// inner join products as p
-// on c."productId"=p.id
-// group by "productId", p.id
    const cart = await Cart.findAll({
      attributes:[
        "productId",
@@ -25,10 +20,10 @@ router.route("/:userId").get(async (req, res, next) => {
 
     })
 
-const totalQty = await Cart.count({where:{userId:req.params.userId}})
+    const totalQty = await Cart.count({where:{userId:req.params.userId}})
 
-const totalPrice = await Cart.sum("product.price", {where:{userId:req.params.userId}, include:{model:Product, attributes:[]} })
-   res.send({cart, totalPrice, totalQty})
+    const totalPrice = await Cart.sum("product.price", {where:{userId:req.params.userId}, include:{model:Product, attributes:[]} })
+    res.send({cart, totalPrice, totalQty})
   } catch (e) {
     console.log(e);
     next(e);
@@ -47,6 +42,17 @@ router
   })
   .delete(async (req, res, next) => {
     try {
+      const rows = await Cart.destroy({
+        where: {
+          productId: req.params.productId,
+          userId: req.params.userId
+        }
+      })
+      if(rows>0) {
+       res.send('ok')
+     } else {
+       res.status(404).send('Not found')
+     }
     } catch (e) {
       console.log(e);
       next(e);

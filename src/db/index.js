@@ -3,6 +3,7 @@ const User = require('./users')
 const Category = require('./categories')
 const Product = require('./products')
 const Cart = require('./carts')
+const Review = require('./reviews')
 const sequelize = new Sequelize(
   process.env.PGDATABASE,
   process.env.PGUSER,
@@ -24,14 +25,12 @@ const models = {
   Category:Category(sequelize, DataTypes),
   Product:Product(sequelize, DataTypes),
   Cart:Cart(sequelize, DataTypes),
+  Review:Review(sequelize, DataTypes),
   sequelize:sequelize
-
 }
 
 // models.Product.belongsTo(models.Category)
 // models.Category.hasMany(models.Product)
-
-
 
 // models.Product.belongsToMany(models.User, {through:models.Cart})
 // models.User.belongsToMany(models.Product, {through:models.Cart})
