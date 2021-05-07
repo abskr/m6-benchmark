@@ -11,13 +11,11 @@ router.route("/:userId").get(async (req, res, next) => {
    const cart = await Cart.findAll({
      attributes:[
        "productId",
-    
         [Sequelize.fn('COUNT', Sequelize.col("productId")), "unitaryQty"],
         [Sequelize.fn('SUM', Sequelize.col("product.price")), "unitaryPrice"]
       ],
      group:["productId", "product.id", "user.id", "product->category.id"],
      include:[{model:Product, include:Category}, User]
-
     })
 
     const totalQty = await Cart.count({where:{userId:req.params.userId}})
@@ -31,7 +29,7 @@ router.route("/:userId").get(async (req, res, next) => {
   }
 });
 router
-  .route("/:userId/:productId")
+  .route("/:userId/products/:productId")
   .post(async (req, res, next) => {
     try {
      const rawCart = await Cart.create({productId:req.params.productId, userId:req.params.userId})

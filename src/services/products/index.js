@@ -3,6 +3,22 @@ const Product = require('../../db').Product
 const Category = require('../../db').Category
 const Review = require('../../db').Review
 const router = express.Router();
+const multer = require("multer");
+const cloudinary = require("../cloudinary");
+const {
+  CloudinaryStorage
+} = require("multer-storage-cloudinary");
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "SQLamazon",
+  },
+});
+
+const cloudinaryMulter = multer({
+  storage: storage
+});
 
 router
   .route("/")
@@ -16,8 +32,13 @@ router
       next(e);
     }
   })
-  .post(async (req, res, next) => {
+  .post(cloudinaryMulter.single("productImg"), async (req, res, next) => {
     try {
+      if(!req.file) {
+        req.body.imageUrl = "https://via.placeholder.com/150"
+      } else {
+        req.body.imageUrl = req.file.path
+      }
       const product = await Product.create(req.body)
       res.send(product)
     } catch (e) {
@@ -38,6 +59,16 @@ router
       console.log(e);
       next(e);
     }
+  })
+  .post(cloudinaryMulter.single("productImg"), async (req, res, next) => {
+    req.body.imageUrl = req.file.path
+    const product = await Product.update(req.body, {
+      where: {
+        id: req.params.id
+      },
+      returning: true
+    })
+    res.send(product[1][0])
   })
   .put(async (req, res, next) => {
     try {
