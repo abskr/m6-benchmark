@@ -23,6 +23,7 @@ router.route("/:userId").get(async (req, res, next) => {
     const totalQty = await Cart.count({where:{userId:req.params.userId}})
 
     const totalPrice = await Cart.sum("product.price", {where:{userId:req.params.userId}, include:{model:Product, attributes:[]} })
+    
     res.send({cart, totalPrice, totalQty})
   } catch (e) {
     console.log(e);

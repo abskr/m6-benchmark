@@ -84,4 +84,51 @@ router
     }
   })
 
+router
+  .route("/:productId/reviews/:reviewId")
+  .get(async (req, res, next) => {
+    try {
+      const review = await Review.findByPk(req.params.reviewId, {
+        include: Product
+      })
+      res.send(review)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  })
+  .put(async (req, res, next) => {
+    try {
+      const review = await Review.update(req.body, {
+        where: {
+          id: req.params.reviewId,
+          productId: req.params.productId
+        },
+        returning: true
+      })
+      res.send(review[1][0])
+    } catch (error) {
+      console.log(error)
+      next(e)
+    }
+  })
+  .delete(async (req, res, next) => {
+    try {
+      const rows = await Review.destroy({
+            where: {
+              id: req.params.reviewId,
+              productId: req.params.productId
+            }
+          })
+      if (rows > 0) {
+        res.send('ok')
+      } else {
+        res.status(404).send('Not found')
+      }
+    } catch (error) {
+      console.log(error)
+      next(e)
+    }
+  })
+
 module.exports = router;
