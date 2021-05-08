@@ -11,12 +11,6 @@ const sequelize = new Sequelize(
   {
     host: process.env.PGHOST,
     dialect: "postgres",
-    // dialectOptions:{
-    //   ssl:{
-    //     require:true, 
-    //     rejectUnauthorized:false
-    //   }
-    // }
   }
 );
 
@@ -28,18 +22,6 @@ const models = {
   Review:Review(sequelize, DataTypes),
   sequelize:sequelize
 }
-
-// models.Product.belongsTo(models.Category)
-// models.Category.hasMany(models.Product)
-
-// models.Product.belongsToMany(models.User, {through:models.Cart})
-// models.User.belongsToMany(models.Product, {through:models.Cart})
-
-// models.Cart.belongsTo(models.User)
-// models.User.hasMany(models.Cart)
-
-// models.Cart.belongsTo(models.Product)
-// models.Product.hasMany(models.Cart)
 
 Object.keys(models).forEach(modelName=> {
   if('associate' in models[modelName]) {

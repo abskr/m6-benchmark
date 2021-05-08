@@ -12,7 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       rate: {
         type: DataTypes.INTEGER,
-        required: true,
+        validate: {
+          min: 1,
+          max: 5,
+        }
       }
     }
   );
